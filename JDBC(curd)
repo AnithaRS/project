@@ -1,0 +1,107 @@
+package curd;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+public class Details {
+	private static Connection con;
+	private static Statement statement;
+	public static void main(String[] args) {         
+		String URL = "jdbc:mysql://localhost:3306/jdbc";
+		String USER = "root";
+		String PSWD = "admin";
+		String QURY="create table datas(id int primary key,"
+				+ "name varchar(35),"
+				+ "mail varchar(67),"
+				+ "phn bigint);";
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(URL, USER, PSWD);
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate(QURY);
+			Scanner sc=new Scanner(System.in);
+			String s;
+		do {	
+			String QURY1="insert into datas(id,name,mail,phn)"
+					+ "values(?,?,?,?);";
+			PreparedStatement stmt1 = con.prepareStatement(QURY1);
+		System.out.println("Enter id:");
+			int id=sc.nextInt();
+			stmt1.setInt(1, id);
+			System.out.println("Enter name:");
+			String name=sc.next();
+			stmt1.setString(2, name);
+			System.out.println("Enter mail:");
+			String mail=sc.next();
+			stmt1.setString(3, mail);
+			System.out.println("Enter phn:");
+            long phn=sc.nextLong();
+            stmt1.setLong(4, phn);
+            System.out.println("you want to insert data:(yes?no)");
+             s=sc.next();
+            stmt1.addBatch();
+            int[] res = stmt1.executeBatch();
+		}while(s.equalsIgnoreCase("yes"));
+		
+		
+		System.out.println("update the data");
+		
+		String s1;
+		do {
+			String QURY3="update datas set name=? where id=?";
+			PreparedStatement stmt2 = con.prepareStatement(QURY3);
+			
+			System.out.println("Enter name:");
+			String nameN=sc.next();
+			stmt2.setString(1, nameN);
+			
+			System.out.println("Enter id:");
+			int idN=sc.nextInt();
+			stmt2.setInt(2, idN);
+			
+		    stmt2.executeUpdate();
+		    System.out.println("you want to update the data(yes/no)");
+		    s1=sc.next();
+		}while(s1.equalsIgnoreCase("yes"));
+			
+		System.out.println("delete the data");
+		String UREYD="delete from datas where id=?";
+		PreparedStatement del = con.prepareStatement(UREYD);
+		System.out.println("Enter del id:");
+		int idD=sc.nextInt();
+		del.setInt(1, idD);
+		 del.executeUpdate();
+		
+		
+		
+		System.out.println("Show the date");
+		String QURY4="select * from datas";
+		Statement stmt3 = con.createStatement();
+		  ResultSet res = stmt3.executeQuery(QURY4);
+		  System.out.println("-------------------------------------");
+		  while(res.next()) {
+			  int id=res.getInt(1);
+			  String name=res.getString(2);
+			  String mail=res.getString(3);
+			  long phn=res.getLong(4);
+			  
+			  System.out.printf("|%-4d| %-9s |%-8s | %-5d|\n",id,name,mail,phn);
+		  }
+		  System.out.println("----------------------------------");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+         
+         
+	}
+
+}
