@@ -1,0 +1,12 @@
+package miniuber;
+
+import java.util.List;
+
+public interface Interf {
+    void insertData();
+	void getTotalRideEachDriver();
+	void TopTwoDriver();
+	void avgRateingPerDriver();
+
+	
+}
