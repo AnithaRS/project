@@ -1,0 +1,39 @@
+package miniuber;
+import java.util.Scanner;
+public class Main {
+		public static void main(String[] args) {
+	        System.out.println("WELCOME THE MINI-UBER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	        Booking b=new Booking();
+	        boolean c=true;
+		while(c==true) {
+			System.out.println("1)insertData");
+			System.out.println("2)getTotalRideEachDriver");
+			System.out.println("3)TopTwoDriver");
+			System.out.println("4)avgRateingPerDriver");
+			System.out.println("5)excixt");
+			Scanner sc=new Scanner(System.in);
+			System.out.println("Enter your choise");
+			int n=sc.nextInt();
+			switch(n) {
+			case 1:
+				b.insertData();
+				break;
+			case 2:
+				b.getTotalRideEachDriver();
+				break;
+			case 3:
+				b.TopTwoDriver();
+				break;
+			case 4:
+				b.avgRateingPerDriver();
+				break;
+			case 5:
+				System.out.println("thank you ");
+				c=false;
+				break;
+		}	
+		}
+		
+		}
+
+}
