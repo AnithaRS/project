@@ -1,0 +1,110 @@
+package advanceJava;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Savepoint;
+import java.util.Scanner;
+
+public class Transaction {
+
+	private static final String URL = "jdbc:mysql://localhost:3306/banking";
+	private static final String USER = "root";
+	private static final String PSWD = "admin";
+	static Scanner sc;
+	public static void main(String[] args) {
+
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection(URL, USER, PSWD);
+			 sc=new Scanner(System.in);
+			 
+			 
+			 //login
+			 System.out.println("Welcome to bank!!!!!!!!");
+			System.out.println("Enter the account no:");
+			int acc_no=sc.nextInt();
+			System.out.println("Enter pin:");
+			int pin=sc.nextInt();
+			
+			
+			//
+			String q="select * from bank where acc_num=? and pin=?";
+			PreparedStatement stmt = con.prepareStatement(q);
+			stmt.setInt(1, acc_no);
+			stmt.setInt(2, pin);
+                ResultSet res = stmt.executeQuery();
+                res.next();
+                System.out.println("welcome "+res.getString(2));
+                System.out.println("your bank balance: "+res.getInt(4));
+			
+			
+                System.out.println("transfer details-----------");
+                System.out.println("Enter you reciver acc num:");
+                int rAcc_num=sc.nextInt();
+                System.out.println("Enter  amount you want to send:");
+                int amount=sc.nextInt();
+                
+                
+                con.setAutoCommit(false);
+                Savepoint s = con.setSavepoint();
+                System.out.println(res.getString(2)+"  account no: "+res.getInt(1)+" want to transfer "+amount);
+                System.out.println(" if yes press Y");
+                System.out.println("if no press N");
+                String choice=sc.next();
+                if(choice.equalsIgnoreCase("y")) {
+                	String q1="update bank set balance=balance + ? where acc_num=?";
+                	PreparedStatement stmt1 = con.prepareStatement(q1);
+                	stmt1.setInt(1, amount);
+                	stmt1.setInt(2, rAcc_num);
+                	 stmt1.executeUpdate();
+
+                	 String q9="update bank set balance=balance - ? where acc_num=?";
+                 	PreparedStatement stmt5 = con.prepareStatement(q9);
+                 	stmt5.setInt(1, amount);
+                 	stmt5.setInt(2, acc_no);
+                 	 stmt5.executeUpdate();
+                 	 
+                	 
+                	 
+                	String q2="select * from bank where acc_num= ? ";
+                	PreparedStatement stmt3 = con.prepareStatement(q2);
+                	stmt3.setInt(1, acc_no);
+                	ResultSet res4 = stmt3.executeQuery();
+                	res4.next();
+                	System.out.println("Your updated balance: "+res4.getInt(4));
+                	
+                	
+                	String q3="select * from bank where acc_num=?";
+                	PreparedStatement stmt4 = con.prepareStatement(q3);
+                	stmt4.setInt(1, rAcc_num);
+                	ResultSet res5 = stmt4.executeQuery();
+                	res5.next();
+                	System.out.println("recever updated balance: "+res5.getInt(4));
+                	
+                	
+                }else {
+                	con.rollback(s);
+                	PreparedStatement d = con.prepareStatement("select * from  bank where acc_num= ?");
+                	d.setInt(1, rAcc_num);
+                	
+                   ResultSet res7 = d.executeQuery();
+                	res7.next();
+                	System.out.println("your balance: "+res7.getInt(4));
+                	
+                	
+                }
+                con.commit();
+                
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+
+}
