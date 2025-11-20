@@ -1,0 +1,69 @@
+package miniuber;
+
+public class Encap {
+
+	private int d_id;
+	private String d_name;
+	private int rating;
+	private int r_id;
+	private String r_name;
+	private int t_id;
+	private int distance;
+	private float fare;
+	private String date;
+	public int getD_id() {
+		return d_id;
+	}
+	public void setD_id(int d_id) {
+		this.d_id = d_id;
+	}
+	public String getD_name() {
+		return d_name;
+	}
+	public void setD_name(String d_name) {
+		this.d_name = d_name;
+	}
+	public int getRating() {
+		return rating;
+	}
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+	public int getR_id() {
+		return r_id;
+	}
+	public void setR_id(int r_id) {
+		this.r_id = r_id;
+	}
+	public String getR_name() {
+		return r_name;
+	}
+	public void setR_name(String r_name) {
+		this.r_name = r_name;
+	}
+	public int getT_id() {
+		return t_id;
+	}
+	public void setT_id(int t_id) {
+		this.t_id = t_id;
+	}
+	public int getDistance() {
+		return distance;
+	}
+	public void setDistance(int distance) {
+		this.distance = distance;
+	}
+	public float getFare() {
+		return fare;
+	}
+	public void setFare(float fare) {
+		this.fare = fare;
+	}
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	
+}
