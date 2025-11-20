@@ -1,0 +1,261 @@
+package miniuber;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
+import com.mysql.cj.xdevapi.Schema.CreateCollectionOptions;
+
+public class Booking implements Interf{
+Scanner sc=new Scanner(System.in);
+ArrayList<Encap> emplist=null;
+PreparedStatement stmt1 ;
+PreparedStatement stmt2;
+
+  @Override
+	public  void insertData() {
+
+		
+		try {
+			Connection con = Connerctor.req();
+			Statement create = con.createStatement();
+			String q1="insert into driver(d_id ,d_name ,rating )"
+					+ "values(?,?,?)";
+			 stmt1 = con.prepareStatement(q1);
+			String choice;
+			do {
+				Encap e=new Encap();
+				System.out.println("Enter driver id:");
+				int  d_id=sc.nextInt();
+				stmt1.setInt(1, d_id);
+				e.setD_id(d_id);
+				
+				System.out.println("Enter driver name:");
+				String  d_name=sc.next();
+				stmt1.setString(2, d_name);
+				e.setD_name(d_name);
+				
+				System.out.println("Enter rating:");
+				int  rating=sc.nextInt();
+				stmt1.setInt(3, rating);
+                e.setRating(rating);
+				
+				stmt1.addBatch();
+				System.out.println("You want to inert driver  data (yes/no)");
+
+				System.out.println("Enter choice:");
+				 choice=sc.next();
+				 stmt1.executeBatch();
+			}while(choice.equalsIgnoreCase("yes"));
+	         
+	         
+	         String q2="insert into rider(r_id,r_name)"
+	         		+ "values(?,?)";
+	          stmt2 = con.prepareStatement(q2);
+	         String  choice1;
+	         do {
+					Encap e1=new Encap();
+					System.out.println("Enter rider id:");
+					int  r_id=sc.nextInt();
+					stmt2.setInt(1, r_id);
+					e1.setR_id(r_id);
+					
+					System.out.println("Enter rider name:");
+					String  r_name=sc.next();
+					stmt2.setString(2, r_name);
+					e1.setR_name(r_name);
+					stmt2.addBatch();
+					System.out.println("You want to insert rider  data (yes/no)");
+
+					System.out.println("Enter choice:");
+					choice1=sc.next();
+					 stmt2.executeBatch();
+	         }while(choice1.equalsIgnoreCase("yes"));
+	        
+	         
+	         
+	         
+	         String q3="insert into trips(t_id,d_id,r_id,distance,dates)"
+	         		+ "values(?,?,?,?,?)";
+	         PreparedStatement stmt3 = con.prepareStatement(q3);
+	         String choice2;
+	         do {
+	        	 Encap e2=new Encap();
+	        	 System.out.println("Enter trip Id:");
+	        	 int t_id=sc.nextInt();
+	        	 stmt3.setInt(1, t_id);
+	        	 e2.setT_id(t_id);
+	        	 
+				  //System.out.printf("|%-4d| %-9s |%-8s | %-5d|\n",id,name,mail,phn);
+
+	        	 
+	        	 
+	        	 System.out.println("available drivers");
+	        	 String aDrivers="select * from driver";
+	        	 ResultSet res = create.executeQuery(aDrivers);
+	        	 System.out.println("-------------------------------------------");
+	        	 System.out.printf("| %-10s| %-10s | %-10s |\n","driver_id","driver_name","rating");
+	        	 System.out.println("------------------------------------------------");
+            while(res.next()) {	        	 
+            	
+         int d_id1 = res.getInt("d_id"); 
+         String d_name1 = res.getString("d_name");
+            	int rating1 = res.getInt("rating");
+                System.out.printf("| %-10d | %-10s | %-10d |\n", d_id1, d_name1, rating1);
+
+            }
+	        	System.out.println("--------------------------------------------"); 
+	        	 
+	        	 
+	        	 
+	        	 
+            System.out.println("Enter driver Id:");
+       	 int d_id=sc.nextInt();
+       	 stmt3.setInt(2, d_id);
+       	 e2.setD_id(d_id);
+       	 
+       	 
+       	 
+       	 System.out.println("available rider");
+    	 String rider="select * from rider";
+    	 ResultSet resR = create.executeQuery(rider);
+    	 System.out.println("-------------------------------");
+    	 System.out.printf("| %-10s| %-10s |\n","rider_id","rider_name");
+    	 System.out.println("-------------------------------");
+    while(resR.next()) {	        	 
+    	
+ int r_id1 = resR.getInt("r_id"); 
+ String r_name1 = resR.getString("r_name");
+        System.out.printf("| %-10d | %-10s |\n", r_id1, r_name1);
+
+    }
+
+	       
+	        	 System.out.println("Enter rider Id:");
+	        	 int r_id=sc.nextInt();
+	        	 stmt3.setInt(3,r_id);
+	        	 e2.setR_id(r_id);
+	        	 
+	        	 System.out.println("Enter distance:");
+	        	 int distance=sc.nextInt();
+	        	 stmt3.setInt(4,distance);
+	        	 e2.setDistance(distance);
+	        	 
+	        	 
+	        	 float val=calcFar(distance);
+	        	 System.out.println("amount : "+val);
+	        	 e2.setFare(val);
+	        	
+	        	 
+	        	 System.out.println("Enter dates:");
+	        	 String dates=sc.next();
+	        	 stmt3.setString(5,dates);
+	        	 e2.setDate(dates);
+	        	 stmt3.addBatch();
+	        	 
+					System.out.println("You want to inert trips  data (yes/no)");
+	          	 System.out.println("Enter choice:");
+					choice2=sc.next();
+		
+	         }while(choice2.equalsIgnoreCase("yes"));
+				stmt3.executeBatch();    
+		}catch(Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+	@Override
+	public void getTotalRideEachDriver() {
+		Connection con;
+		try {
+			con = Connerctor.req();
+			Statement create = con.createStatement();
+			System.out.println("get the total ride of each driver");
+			String d="select   d_id , sum(distance) from trips group by d_id ";
+			ResultSet res4 = create.executeQuery(d);
+			System.out.println("---------------------------------");
+			System.out.printf("| %-9s | %-5s |\n","driver_id","total_ride");
+			while(res4.next()) {
+				int driver_id=res4.getInt(1);
+			    int count=res4.getInt(2);
+			    System.out.printf("| %-6d | %-9d | \n",driver_id,count);
+			}
+
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		
+	}
+
+
+	public float calcFar(float n) {
+          int perKm=50;
+     return perKm*n;
+	}
+
+	@Override
+	public void TopTwoDriver() {
+		Connection con;
+		try {
+			con = Connerctor.req();
+			Statement create3 = con.createStatement();
+			String tpo="select * from driver order by rating desc limit 2 offset 0";
+        	ResultSet res7 = create3.executeQuery(tpo);
+        	System.out.println("---------------------------------");
+			System.out.printf("| %-9s | %-5s | %-8s|\n","driver_id","driver_name","rating");
+			System.out.println("----------------------------------");
+		while(res7.next()) {
+			int driver_id=res7.getInt(1);
+		    String driver_name=res7.getString(2);
+		    int rating=res7.getInt(3);
+		    System.out.printf("| %-6d | %-9s | %-7d| \n",driver_id,driver_name,rating);
+		}
+		System.out.println("--------------------------------------");
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
+	}
+
+	@Override
+	public void avgRateingPerDriver() {
+
+		Connection con;
+		try {
+			con = Connerctor.req();
+			 Statement create = con.createStatement();
+	        	String avg="select d_id, avg(rating) from driver  group by d_id";
+	        	ResultSet res6 = create.executeQuery(avg);
+	        	
+	        	
+	        	System.out.println("---------------------------------");
+				System.out.printf("| %-9s | %-5s |\n","driver_id","Avarge");
+			while(res6.next()) {
+				int driver_id=res6.getInt(1);
+			    int avg1=res6.getInt(2);
+			    System.out.printf("| %-6d | %-9d | \n",driver_id,avg1);
+			}
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	
+
+	
+
+	
+
+}
